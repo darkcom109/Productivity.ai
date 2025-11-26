@@ -76,7 +76,7 @@ export default function AboutPage() {
             We believe that powerful productivity tools should be accessible to everyone, without sacrificing privacy or requiring subscriptions. Productivity.AI was built to provide enterprise-level features in a simple, privacy-focused application that anyone can use.
           </p>
           <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-            Whether you're a student managing coursework, a professional handling projects, or anyone trying to stay organised, we want to help you achieve more while respecting your privacy and keeping things simple.
+            Whether you are a student managing coursework, a professional handling projects, or anyone trying to stay organised, we want to help you achieve more while respecting your privacy and keeping things simple.
           </p>
         </div>
       </section>
@@ -185,7 +185,7 @@ export default function AboutPage() {
             Built with Love for the Community
           </h2>
           <p className="text-xl text-blue-100 mb-10">
-            This project is open to feedback and suggestions. We're constantly improving based on real user needs.
+            This project is open to feedback and suggestions. We are constantly improving based on real user needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
