@@ -63,6 +63,12 @@ export function useTodos() {
       subtasks: [],
       timeEntries: [],
       order: maxOrder + 1,
+
+      notes: [],
+      color: "default",
+      recurring: null, // or { interval: 'daily' } depending on system
+      pomodoroSessions: [], // if tracking per task
+      isTemplate: false,
     };
     setTodos((prev) => [newTodo, ...prev]);
   };
@@ -302,6 +308,8 @@ export function useTodos() {
       monthCompleted,
       completionsByCategory: completionsByCategory as any,
       completionsByPriority: completionsByPriority as any,
+      totalPomodoros: todos.reduce((sum, t) => sum + (t.pomodoroSessions?.length ?? 0), 0),
+      currentStreak: 0, // TODO: compute streak logic later
     };
   };
 
