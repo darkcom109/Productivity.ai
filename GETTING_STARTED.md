@@ -190,7 +190,7 @@ Press these while focused on the app (not in an input field):
 - Drag and drop works best on desktop
 
 ### Keyboard Shortcuts Not Working?
-- Make sure you're not typing in an input field
+- Make sure you are not typing in an input field
 - Try clicking outside any input first
 - Press `?` to verify shortcuts
 
@@ -211,7 +211,7 @@ Press these while focused on the app (not in an input field):
 
 ---
 
-## 🌟 You're All Set!
+## 🌟 you are All Set!
 
 The application is running at **http://localhost:3000**
 
