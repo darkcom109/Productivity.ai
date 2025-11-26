@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTodos } from '@/hooks/useTodos';
-import { TodoFilters, ViewMode } from '@/types/todo';
+import { TodoFilters, ViewMode, ColorTheme } from '@/types/todo';
 import AddTodoForm from '@/components/AddTodoForm';
 import FilterBar from '@/components/FilterBar';
 import DraggableTodoList from '@/components/DraggableTodoList';
@@ -10,7 +10,11 @@ import KanbanBoard from '@/components/KanbanBoard';
 import ProductivityDashboard from '@/components/ProductivityDashboard';
 import ImportExport from '@/components/ImportExport';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
-import { CheckSquare, Loader2, LayoutGrid, List, TrendingUp, Download, HelpCircle } from 'lucide-react';
+import PomodoroTimer from '@/components/PomodoroTimer';
+import FocusMode from '@/components/FocusMode';
+import ThemeSelector from '@/components/ThemeSelector';
+import QuickActionsMenu from '@/components/QuickActionsMenu';
+import { CheckSquare, Loader2, LayoutGrid, List, TrendingUp, Download, HelpCircle, Zap, Clock } from 'lucide-react';
 
 export default function Home() {
   const {
@@ -49,6 +53,10 @@ export default function Home() {
   const [showImportExport, setShowImportExport] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPomodoro, setShowPomodoro] = useState(false);
+  const [showFocusMode, setShowFocusMode] = useState(false);
+  const [showThemes, setShowThemes] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<ColorTheme>('default');
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,10 +65,41 @@ export default function Home() {
   const activeCount = todos.filter((t) => !t.completed && !t.archived).length;
   const stats = getProductivityStats();
 
+  // Load theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') as ColorTheme;
+    if (savedTheme) {
+      setCurrentTheme(savedTheme);
+    }
+  }, []);
+
+  // Save theme to localStorage
+  const handleThemeChange = (theme: ColorTheme) => {
+    setCurrentTheme(theme);
+    localStorage.setItem('theme', theme);
+  };
+
+  // Get theme colors
+  const getThemeGradient = () => {
+    switch (currentTheme) {
+      case 'ocean':
+        return 'from-blue-50 via-cyan-50 to-teal-50 dark:from-blue-900/20 dark:via-cyan-900/20 dark:to-teal-900/20';
+      case 'sunset':
+        return 'from-orange-50 via-red-50 to-pink-50 dark:from-orange-900/20 dark:via-red-900/20 dark:to-pink-900/20';
+      case 'forest':
+        return 'from-green-50 via-emerald-50 to-teal-50 dark:from-green-900/20 dark:via-emerald-900/20 dark:to-teal-900/20';
+      case 'lavender':
+        return 'from-purple-50 via-pink-50 to-rose-50 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-rose-900/20';
+      case 'monochrome':
+        return 'from-gray-50 via-gray-100 to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900';
+      default:
+        return 'from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900';
+    }
+  };
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Check if user is typing in an input/textarea
       if (
         document.activeElement?.tagName === 'INPUT' ||
         document.activeElement?.tagName === 'TEXTAREA'
@@ -82,7 +121,7 @@ export default function Home() {
             break;
           case 'k':
             e.preventDefault();
-            setViewMode((prev) => (prev === 'list' ? 'kanban' : 'list'));
+            setViewMode((prev) => (prev === 'list' ? 'kanban' : prev === 'kanban' ? 'focus' : 'list'));
             break;
           case 'a':
             e.preventDefault();
@@ -96,6 +135,10 @@ export default function Home() {
             e.preventDefault();
             searchInputRef.current?.focus();
             break;
+          case 'p':
+            e.preventDefault();
+            setShowPomodoro((prev) => !prev);
+            break;
         }
       }
 
@@ -108,6 +151,8 @@ export default function Home() {
         setShowAnalytics(false);
         setShowImportExport(false);
         setShowShortcuts(false);
+        setShowPomodoro(false);
+        setShowThemes(false);
       }
     };
 
@@ -117,7 +162,7 @@ export default function Home() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className={`min-h-screen bg-gradient-to-br ${getThemeGradient()} flex items-center justify-center transition-colors`}>
         <div className="text-center">
           <Loader2 className="animate-spin h-12 w-12 text-blue-500 mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">Loading your todos...</p>
@@ -128,62 +173,127 @@ export default function Home() {
 
   const enableDragAndDrop = filters.sortBy === 'manual' && filters.status !== 'archived';
 
-  return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4 transition-colors">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <CheckSquare size={40} className="text-blue-500" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Productivity.AI
-            </h1>
-          </div>
-          <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
-            Your advanced task management solution
-          </p>
+  // Focus Mode
+  if (viewMode === 'focus') {
+    return (
+      <FocusMode
+        todos={filteredTodos}
+        onToggle={toggleTodo}
+        onClose={() => setViewMode('list')}
+        onStartTimer={(id) => {
+          setShowPomodoro(true);
+          setViewMode('list');
+        }}
+      />
+    );
+  }
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-3">
-            <button
-              onClick={() => setViewMode(viewMode === 'list' ? 'kanban' : 'list')}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:shadow-md transition-all border border-gray-200 dark:border-gray-700"
-              title="Toggle View (Ctrl+K)"
-            >
-              {viewMode === 'list' ? <LayoutGrid size={20} /> : <List size={20} />}
-              {viewMode === 'list' ? 'Kanban View' : 'List View'}
-            </button>
-            <button
-              onClick={() => setShowAnalytics(!showAnalytics)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:shadow-md transition-all border border-gray-200 dark:border-gray-700"
-              title="Analytics (Ctrl+A)"
-            >
-              <TrendingUp size={20} />
-              Analytics
-            </button>
-            <button
-              onClick={() => setShowImportExport(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:shadow-md transition-all border border-gray-200 dark:border-gray-700"
-              title="Import/Export (Ctrl+E)"
-            >
-              <Download size={20} />
-              Import/Export
-            </button>
-            <button
-              onClick={() => setShowShortcuts(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:shadow-md transition-all border border-gray-200 dark:border-gray-700"
-              title="Keyboard Shortcuts (?)"
-            >
-              <HelpCircle size={20} />
-              Shortcuts
-            </button>
+  return (
+    <main className={`min-h-screen bg-gradient-to-br ${getThemeGradient()} py-8 px-4 transition-all duration-500`}>
+      <div className="max-w-7xl mx-auto">
+        {/* Enhanced Header with Glassmorphism */}
+        <div className="text-center mb-8 relative">
+          {/* Decorative blobs */}
+          <div className="absolute top-0 left-1/4 w-72 h-72 bg-blue-300 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute top-0 right-1/4 w-72 h-72 bg-purple-300 dark:bg-purple-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          
+          <div className="relative">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <CheckSquare size={40} className="text-blue-500 animate-float" />
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Productivity.AI
+              </h1>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+              Your advanced task management solution
+            </p>
+
+            {/* Quick Stats */}
+            <div className="flex flex-wrap justify-center gap-3 mb-4">
+              <div className="glass dark:glass-dark rounded-xl px-4 py-2 backdrop-blur-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Active: <span className="font-bold text-blue-600 dark:text-blue-400">{activeCount}</span>
+                </span>
+              </div>
+              <div className="glass dark:glass-dark rounded-xl px-4 py-2 backdrop-blur-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Completed: <span className="font-bold text-green-600 dark:text-green-400">{completedCount}</span>
+                </span>
+              </div>
+              <div className="glass dark:glass-dark rounded-xl px-4 py-2 backdrop-blur-lg">
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Rate: <span className="font-bold text-purple-600 dark:text-purple-400">{stats.completionRate.toFixed(0)}%</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Action Buttons with Enhanced UI */}
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => setViewMode(viewMode === 'list' ? 'kanban' : 'list')}
+                className="glass dark:glass-dark hover:shadow-xl transition-all rounded-xl px-4 py-2 border border-white/20 backdrop-blur-lg flex items-center gap-2 text-gray-700 dark:text-gray-300"
+                title="Toggle View (Ctrl+K)"
+              >
+                {viewMode === 'list' ? <LayoutGrid size={18} /> : <List size={18} />}
+                {viewMode === 'list' ? 'Kanban' : 'List'}
+              </button>
+              
+              <button onClick={() => setViewMode('focus')}
+              
+                className="glass dark:glass-dark hover:shadow-glow transition-all rounded-xl px-4 py-2 border border-white/20 backdrop-blur-lg flex items-center gap-2 text-purple-600 dark:text-purple-400 font-semibold"
+              >
+                <Zap size={18} />
+                Focus Mode
+              </button>
+
+              <button
+                onClick={() => setShowPomodoro(true)}
+                className="glass dark:glass-dark hover:shadow-xl transition-all rounded-xl px-4 py-2 border border-white/20 backdrop-blur-lg flex items-center gap-2 text-red-600 dark:text-red-400"
+              >
+                <Clock size={18} />
+                Pomodoro
+              </button>
+              
+              <button
+                onClick={() => setShowAnalytics(!showAnalytics)}
+                className="glass dark:glass-dark hover:shadow-xl transition-all rounded-xl px-4 py-2 border border-white/20 backdrop-blur-lg flex items-center gap-2 text-gray-700 dark:text-gray-300"
+                title="Analytics (Ctrl+A)"
+              >
+                <TrendingUp size={18} />
+                Analytics
+              </button>
+              
+              <button
+                onClick={() => setShowImportExport(true)}
+                className="glass dark:glass-dark hover:shadow-xl transition-all rounded-xl px-4 py-2 border border-white/20 backdrop-blur-lg flex items-center gap-2 text-gray-700 dark:text-gray-300"
+                title="Import/Export (Ctrl+E)"
+              >
+                <Download size={18} />
+                Export
+              </button>
+              
+              <button
+                onClick={() => setShowShortcuts(true)}
+                className="glass dark:glass-dark hover:shadow-xl transition-all rounded-xl px-4 py-2 border border-white/20 backdrop-blur-lg flex items-center gap-2 text-gray-700 dark:text-gray-300"
+                title="Shortcuts (?)"
+              >
+                <HelpCircle size={18} />
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Analytics Dashboard */}
         {showAnalytics && (
-          <div className="mb-6">
+          <div className="mb-6 animate-slide-in">
             <ProductivityDashboard stats={stats} />
+          </div>
+        )}
+
+        {/* Theme Selector */}
+        {showThemes && (
+          <div className="mb-6 animate-slide-in">
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={handleThemeChange} />
           </div>
         )}
 
@@ -209,9 +319,9 @@ export default function Home() {
         {/* Todo List / Kanban Board */}
         <div>
           {filteredTodos.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-12 text-center border border-gray-200 dark:border-gray-700">
+            <div className="glass dark:glass-dark rounded-2xl shadow-2xl p-12 text-center border border-white/20 backdrop-blur-lg animate-fade-in">
               <div className="text-gray-400 dark:text-gray-500 mb-4">
-                <CheckSquare size={64} className="mx-auto opacity-30" />
+                <CheckSquare size={64} className="mx-auto opacity-30 animate-float" />
               </div>
               {todos.length === 0 ? (
                 <>
@@ -291,6 +401,17 @@ export default function Home() {
       )}
 
       {showShortcuts && <KeyboardShortcuts onClose={() => setShowShortcuts(false)} />}
+      
+      {showPomodoro && <PomodoroTimer onClose={() => setShowPomodoro(false)} />}
+
+      {/* Quick Actions Menu */}
+      <QuickActionsMenu
+        onNewTodo={() => setShowAddForm(true)}
+        onPomodoro={() => setShowPomodoro(true)}
+        onFocusMode={() => setViewMode('focus')}
+        onTemplates={() => {}}
+        onThemes={() => setShowThemes(!showThemes)}
+      />
     </main>
   );
 }

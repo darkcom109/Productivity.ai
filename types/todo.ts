@@ -2,7 +2,9 @@ export type Priority = 'low' | 'medium' | 'high' | 'urgent';
 export type Category = 'personal' | 'work' | 'shopping' | 'health' | 'other';
 export type SortOption = 'dateCreated' | 'dueDate' | 'priority' | 'title' | 'manual';
 export type FilterOption = 'all' | 'active' | 'completed' | 'archived';
-export type ViewMode = 'list' | 'kanban';
+export type ViewMode = 'list' | 'kanban' | 'focus';
+export type RecurringFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'none';
+export type ColorTheme = 'default' | 'ocean' | 'sunset' | 'forest' | 'lavender' | 'monochrome';
 
 export interface Subtask {
   id: string;
@@ -15,6 +17,27 @@ export interface TimeEntry {
   startTime: string;
   endTime: string | null;
   duration: number; // in seconds
+}
+
+export interface Note {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
+export interface RecurringConfig {
+  frequency: RecurringFrequency;
+  interval: number;
+  lastGenerated: string | null;
+}
+
+export interface PomodoroSession {
+  id: string;
+  startTime: string;
+  endTime: string | null;
+  duration: number; // 25 minutes work, 5 minutes break
+  type: 'work' | 'break';
+  completed: boolean;
 }
 
 export interface Todo {
@@ -32,6 +55,11 @@ export interface Todo {
   subtasks: Subtask[];
   timeEntries: TimeEntry[];
   order: number;
+  notes: Note[];
+  color: string | null;
+  recurring: RecurringConfig | null;
+  pomodoroSessions: PomodoroSession[];
+  isTemplate: boolean;
 }
 
 export interface TodoFilters {
@@ -55,5 +83,15 @@ export interface ProductivityStats {
   monthCompleted: number;
   completionsByCategory: Record<Category, number>;
   completionsByPriority: Record<Priority, number>;
+  totalPomodoros: number;
+  currentStreak: number;
+}
+
+export interface AppSettings {
+  theme: ColorTheme;
+  pomodoroWorkDuration: number;
+  pomodoroBreakDuration: number;
+  notificationsEnabled: boolean;
+  focusModeEnabled: boolean;
 }
 
