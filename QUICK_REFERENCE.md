@@ -29,7 +29,7 @@
 
 ### Kanban View:
 - Drag cards between columns to change priority
-- Organized by: Urgent → High → Medium → Low → Completed
+- Organised by: Urgent → High → Medium → Low → Completed
 
 ## 🔍 Filtering & Sorting
 
@@ -107,7 +107,7 @@
 
 ## 🏷️ Best Practices
 
-### Organizing Tasks:
+### Organising Tasks:
 1. Use **categories** for major life areas (Work, Personal, etc.)
 2. Use **priorities** for urgency levels
 3. Use **tags** for cross-cutting themes (#urgent, #waiting, #idea)

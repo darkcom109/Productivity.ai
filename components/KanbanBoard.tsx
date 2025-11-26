@@ -4,7 +4,7 @@ import { Todo, Priority } from '@/types/todo';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCorners } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useState } from 'react';
-import KanbanCard from './KanbanCard';
+import KanbanCard from '@/components/KanbanCard';
 import { Clock, AlertCircle, CheckCircle2, Archive } from 'lucide-react';
 
 interface KanbanBoardProps {

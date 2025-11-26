@@ -57,7 +57,7 @@ Open your browser and visit that URL to start using the application!
 
 #### Try Kanban View
 1. Click **"Kanban View"** button (or press `Ctrl+K`)
-2. See your todos organized by priority
+2. See your todos organised by priority
 3. Drag a card to a different column to change priority
 4. Switch back with `Ctrl+K`
 
@@ -128,7 +128,7 @@ Press these while focused on the app (not in an input field):
 - [ ] Use the search box
 - [ ] Edit a todo
 
-### Day 2: Organization
+### Day 2: Organisation
 - [ ] Add tags to your todos
 - [ ] Set due dates
 - [ ] Try different categories
@@ -220,7 +220,7 @@ Start creating todos and explore all the features. Remember:
 - Click "Analytics" to track your progress
 - Export regularly to backup your data
 
-**Happy organizing! 🎉**
+**Happy organising! 🎉**
 
 ---
 

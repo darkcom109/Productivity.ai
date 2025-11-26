@@ -110,7 +110,7 @@ Built-in timer to track time spent on each task.
 ## Kanban Board View
 
 ### Overview
-Visual board organized by priority levels for better task management.
+Visual board organised by priority levels for better task management.
 
 ### Columns
 1. **Urgent** (Red): Critical, immediate tasks
@@ -128,7 +128,7 @@ Visual board organized by priority levels for better task management.
 
 ### How to Use
 1. Click "Kanban View" button or press `Ctrl+K`
-2. View todos organized by priority
+2. View todos organised by priority
 3. Drag cards between columns to change priority
 4. All actions available (complete, edit, delete, archive)
 
