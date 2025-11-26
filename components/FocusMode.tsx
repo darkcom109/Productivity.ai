@@ -157,19 +157,6 @@ export default function FocusMode({ todos, onToggle, onClose, onStartTimer }: Fo
               </span>
             </div>
           )}
-
-          {currentTodo.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {currentTodo.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-sm text-white border border-white/20"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Subtasks */}
