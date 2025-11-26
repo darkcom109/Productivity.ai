@@ -56,7 +56,7 @@ export default function FocusMode({ todos, onToggle, onClose, onStartTimer }: Fo
             All Done! 🎉
           </h2>
           <p className="text-xl text-white/80 mb-8">
-            You've completed all your active tasks. Time to celebrate or add new goals!
+            You have completed all your active tasks. Time to celebrate or add new goals!
           </p>
           <button
             onClick={onClose}
